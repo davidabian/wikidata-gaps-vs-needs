@@ -1,0 +1,10 @@
+#Sovereign states
+SELECT ?item ?itemLabel
+WHERE {
+  ?item (wdt:P31/(wdt:P279*)) wd:Q3624078 .
+  OPTIONAL {
+    ?item rdfs:label ?itemLabel .
+    FILTER(LANG(?itemLabel) = 'en')
+  }
+  MINUS { ?item wdt:P576|wdt:P582 ?end . }
+}

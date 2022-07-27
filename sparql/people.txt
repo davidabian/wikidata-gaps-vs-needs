@@ -1,0 +1,35 @@
+#People with, optionally, sex, year of birth, year of death, occupation and citizenship
+SELECT ?item ?sex (YEAR(?birth_date) AS ?birth_year)
+       (YEAR(?death_date) AS ?death_year) ?occupation
+       ?citizenship
+WHERE {
+  {
+    SELECT ?item WHERE {
+      SERVICE bd:sample {
+        ?item wdt:P31 wd:Q5 .
+        bd:serviceParam bd:sample.limit "50000"^^xsd:integer .
+        bd:serviceParam bd:sample.sampleType "RANDOM" .
+      }
+    }
+  }
+  OPTIONAL { ?item wdt:P21 ?sex . }
+  OPTIONAL { ?item wdt:P106 ?occupation . }
+  OPTIONAL { ?item wdt:P27 ?citizenship . }
+  VALUES ?date_precision {
+    "9"^^xsd:integer
+    "10"^^xsd:integer
+    "11"^^xsd:integer
+  }
+  OPTIONAL {
+    ?item p:P569/psv:P569 [
+      wikibase:timePrecision ?date_precision ;
+      wikibase:timeValue ?birth_date ;
+    ] .
+  }
+  OPTIONAL {
+    ?item p:P570/psv:P570 [
+      wikibase:timePrecision ?date_precision ;
+      wikibase:timeValue ?death_date ;
+    ] .
+  }
+}
