@@ -67,9 +67,10 @@ class WdSparql2Csv(object):
         print(self.description)
         keep_iterating = True
         chunks = 0
-        subquery = self.sparql_query.replace(self.offset_placeholder,
-                                             "OFFSET 0 LIMIT " + str(self.chunk_size))
         while keep_iterating:
+            subquery = self.sparql_query.replace(self.offset_placeholder,
+                                     "OFFSET " + str(chunks * self.chunk_size)
+                                     + " LIMIT " + str(self.chunk_size))
             print(subquery)
             output_filename = self.description + "." + str(chunks) + ".csv"
             num_qids = self.__run_sparql_query(subquery, output_filename)
@@ -77,9 +78,6 @@ class WdSparql2Csv(object):
                 keep_iterating = False
             else:
                 chunks += 1
-                subquery = self.sparql_query.replace(self.offset_placeholder,
-                                         "OFFSET " + str(chunks * self.chunk_size)
-                                         + " LIMIT " + str(self.chunk_size))
         # merge chunks
         input_filenames = [self.description + "." + str(chunk) + ".csv" for chunk in range(chunks)] # exclude last file, empty
         print(input_filenames)
